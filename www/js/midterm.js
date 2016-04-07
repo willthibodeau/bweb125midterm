@@ -1,3 +1,4 @@
 $( document ).ready(function() {
-    console.log( "ready!" );
-});
+     function get_location() {
+    alert(local);
+  }

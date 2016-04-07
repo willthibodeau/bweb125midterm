@@ -17,6 +17,10 @@
          db.transaction(function (tx) 
        {
         tx.executeSql('CREATE TABLE IF NOT EXISTS LOGR (name unique, city, state)');
+        tx.executeSql('ALTER TABLE LOGR ALTER COLUMN state TYPE varchar (255)');
+        tx.executeSql('ALTER TABLE LOGR ALTER COLUMN city TYPE varchar (255)');
+        tx.executeSql('ALTER TABLE LOGR ALTER COLUMN name TYPE varchar (255)');
+
         // tx.executeSql('INSERT INTO LOGS (id, log) VALUES (1, "foobar")');
         // tx.executeSql('INSERT INTO LOGS (id, log) VALUES (2, "logmsg")');
         msg = '<p>Log message created and row inserted.</p>';
@@ -32,6 +36,7 @@
     var city = y.value;
     var b = document.getElementById("e_state");
     var state = b.value;
+    local = city + " " + state ;
      
     db.transaction(function (tx) 
       {  
@@ -61,7 +66,7 @@
 
    function SearchDatabaseForValue(){
 
-    var x = document.getElementById("search_id");
+    var x = document.getElementById("search_name");
     var name = x.value;
 
     db.transaction(function (tx) 
@@ -82,6 +87,10 @@
       location.reload();
     })
   }//end deletevaluefromdatabase function
+
+  function get_location() {
+    alert(local);
+  }
 
 </script>
 <style>
@@ -110,7 +119,7 @@
     </head>
     <body>
 
-<div data-role="page" id="page1" data-theme="b">
+<div data-role="page" id="page1" data-theme="b" data-ajax="false">
 
    <div data-role="header">
       <h1>First page</h1>
@@ -124,10 +133,11 @@
  <input id="e_state" type="text" placeholder="state"> 
   <input type="button" value="Add record" onClick="AddValueToDB()" >
   <br>
-  <input id="search_id" type="text" placeholder="search by Name" >
+  <input id="search_name" type="text" placeholder="search by Name" >
   <div><input type="button" value="Search" onClick="SearchDatabaseForValue()" ></div>
 
-  <input type="button" value="Delete" onClick="DeleteValueFromDatabase()">
+  <input type="button" value="Delete" onClick="DeleteValueFromDatabase()"><br>
+  <input type="button" value="Get Location" onclick="get_location()">
 
  <a href="#page2" data-ajax="false">page 2</a>
 
