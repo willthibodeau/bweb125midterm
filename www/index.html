@@ -5,8 +5,10 @@
 		<title>jQuery PhoneGap BoilerPlate</title>
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
 		<link rel="stylesheet" href="css/themes/default/jquery.mobile-1.4.5.min.css">
+    
 		<script src="js/jquery.js"></script>
 		<script src="js/jquery.mobile-1.4.5.min.js"></script>
+    <script src="js/midterm.js"></script>
     <script type="text/javascript">
     
          var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
@@ -28,12 +30,13 @@
     var name = x.value;
     var y =  document.getElementById("e_city");
     var city = y.value;
-     var b = document.getElementById("e_state");
-     var state = b.value;
+    var b = document.getElementById("e_state");
+    var state = b.value;
      
     db.transaction(function (tx) 
       {  
           tx.executeSql('INSERT INTO LOGR (name,city, state) VALUES (?, ?, ?)', [name, city, state]);
+          
       }//End function (tx)
     );//End db.transaction()
     
@@ -49,6 +52,7 @@
           {
           msg = "<p>" + results.rows.item(i).city + " " + results.rows.item(i).state +" " + results.rows.item(i).name +"</p>";
           document.querySelector('#status').innerHTML +=  msg;
+          
           }
         }, null);//End tx.executeSql()
        }//End function(tx) 
@@ -56,8 +60,10 @@
   };//End AddValueToDB()
 
    function SearchDatabaseForValue(){
+
     var x = document.getElementById("search_id");
     var name = x.value;
+
     db.transaction(function (tx) 
       {
         tx.executeSql('SELECT * FROM LOGR where name = "' + name + '"', [], function (tx, results) 
@@ -70,6 +76,7 @@
    }
 
   function DeleteValueFromDatabase() {
+   
     db.transaction(function(tx) {
       tx.executeSql('delete from LOGR');
       location.reload();
@@ -103,7 +110,7 @@
     </head>
     <body>
 
-<div data-role="page" id="page1">
+<div data-role="page" id="page1" data-theme="b">
 
    <div data-role="header">
       <h1>First page</h1>
@@ -122,7 +129,7 @@
 
   <input type="button" value="Delete" onClick="DeleteValueFromDatabase()">
 
- <a href="map.html" data-ajax="false">page 2</a>
+ <a href="#page2" data-ajax="false">page 2</a>
 
 
    </div><!-- end content -->
@@ -132,7 +139,7 @@
 
 </div><!-- end page -->
 
-<div data-role="page" id="page2" data-title="This is the second page">
+<div data-role="page" id="page2" data-title="This is the second page" data-theme="b">
 
    <div data-role="header">
       <h1>Second page</h1>
