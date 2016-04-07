@@ -93,29 +93,16 @@
   }
 
 </script>
-<style>
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      #map {
-        height: 100%;
-      }
-      #floating-panel {
-        position: absolute;
-        top: 10px;
-        left: 25%;
-        z-index: 5;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #999;
-        text-align: center;
-        font-family: 'Roboto','sans-serif';
-        line-height: 30px;
-        padding-left: 10px;
-      }
-    </style>
+
+<script src="javascripts/jquery.js"></script>
+<script type="text/javascript" src="//www.google.fr/jsapi"></script>
+<script type="text/javascript">
+    google.load("maps", "3.4", {
+      other_params: "sensor=false&language=fr"
+    });
+</script>
+<script type="text/javascript" src="javascripts/jquery.googlemap.js"></script>
+
     </head>
     <body>
 
@@ -155,42 +142,19 @@
       <h1>Second page</h1>
    </div>
    <div data-role="content">
-      <div id="floating-panel">
-      <input id="address" type="textbox" value="asheville nc">
-      <input id="submit" type="button" value="Geocode">
-    </div>
-    <div id="map"></div>
-    <script>
-      function initMap() {
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 16,
-          center: {lat: 35, lng: -82}
-        });
-        var geocoder = new google.maps.Geocoder();
 
-        document.getElementById('submit').addEventListener('click', function() {
-          geocodeAddress(geocoder, map);
-        });
-      }
+    <div id="map" style="width: 300px; height: 300px;"></div>
+<script type="text/javascript">
+  $(function() {
+    $("#map").googleMap({
+      zoom: 10, // Initial zoom level (optional)
+      coords: [48.895651, 2.290569], // Map center (optional)
+      type: "ROADMAP" // Map type (optional)
+    });
+  })
+</script>
 
-      function geocodeAddress(geocoder, resultsMap) {
-        var address = document.getElementById('address').value;
-        geocoder.geocode({'address': address}, function(results, status) {
-          if (status === google.maps.GeocoderStatus.OK) {
-            resultsMap.setCenter(results[0].geometry.location);
-            var marker = new google.maps.Marker({
-              map: resultsMap,
-              position: results[0].geometry.location
-            });
-          } else {
-            alert('Geocode was not successful for the following reason: ' + status);
-          }
-        });
-      }
-    </script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClWTAW2oXK93r21WZJJa9EY4X04rI73Fg&callback=initMap">
-    </script>
+      
    </div>
    <div data-role="footer">
       <h4>abtech.edu</h4>
