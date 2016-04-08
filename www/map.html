@@ -1,71 +1,33 @@
 <!DOCTYPE html>
 <html>
+
   <head>
-    <title>Will's Geocoding Map</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    <style>
-      html, body {
-        height: 50%;
-        margin: 0;
-        padding: 0;
-      }
-      #map {
-        margin: 0 auto;
-        height: 50vh;
-        width: 50vw;
-      }
-      #floating-panel {
-        position: absolute;
-        top: 10px;
-        left: 25%;
-        z-index: 5;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #999;
-        text-align: center;
-        font-family: 'Roboto','sans-serif';
-        line-height: 30px;
-        padding-left: 10px;
-      }
-    </style>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <title>jQuery Google Map</title>
+    <script src="js/jquery.js"></script>
+    <script type="text/javascript" src="//www.google.fr/jsapi"></script>
+    <script type="text/javascript">
+        google.load("maps", "3.4", {
+          other_params: "sensor=false&language=en"
+        });
+    </script>
+  <script type="text/javascript" src="https://rawgithub.com/Tilotiti/jQuery-Google-Map/master/jquery.googlemap.js"></script>
   </head>
   <body>
-    <div id="floating-panel">
-      <input id="address" type="textbox" value="asheville nc">
-      <input id="submit" type="button" value="Geocode">
-    </div>
-    <div id="map"></div>
-    <script>
-      function initMap() {
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 16,
-          center: {lat: 35, lng: -82}
-        });
-        var geocoder = new google.maps.Geocoder();
-
-        document.getElementById('submit').addEventListener('click', function() {
-          geocodeAddress(geocoder, map);
-        });
-      }
-
-      function geocodeAddress(geocoder, resultsMap) {
-        var address = document.getElementById('address').value;
-        geocoder.geocode({'address': address}, function(results, status) {
-          if (status === google.maps.GeocoderStatus.OK) {
-            resultsMap.setCenter(results[0].geometry.location);
-            var marker = new google.maps.Marker({
-              map: resultsMap,
-              position: results[0].geometry.location
-            });
-          } else {
-            alert('Geocode was not successful for the following reason: ' + status);
-          }
-        });
-      }
-    </script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClWTAW2oXK93r21WZJJa9EY4X04rI73Fg&callback=initMap">
-    </script>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <script type="text/javascript">
+        $(function() {
+          $("#map1").googleMap({
+            zoom: 16, // Zoom initial (optionnel)
+            coords: [35, -82], // Centre de la carte (optionnel)
+            type: "ROADMAP" // Type de la carte (optionnel)
+          });
+        })
+      </script>
+        <div id="map1" style="width:300px; height:300px; margin: auto; margin-top: 20px;"></div>
   </body>
 </html>

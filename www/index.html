@@ -1,165 +1,125 @@
 <!DOCTYPE html>
 <html>
-    <head>
+  <head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>jQuery PhoneGap BoilerPlate</title>
+		<title>Will Thibodeau Midterm 2</title>
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
 		<link rel="stylesheet" href="css/themes/default/jquery.mobile-1.4.5.min.css">
-    
 		<script src="js/jquery.js"></script>
 		<script src="js/jquery.mobile-1.4.5.min.js"></script>
     <script src="js/midterm.js"></script>
+   
     <script type="text/javascript">
-    
-         var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
-         var msg;
+        google.load("maps", "3.4", {
+          other_params: "sensor=false&language=fr"
+        });
+    </script>
+    <script type="text/javascript" src="js/jquery.googlemap.js"></script>
+    <script type="text/javascript">
+      var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+      var msg;
+      db.transaction(function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS LOGR (name unique, city, state)');
+          tx.executeSql('ALTER TABLE LOGR ALTER COLUMN state TYPE varchar (255)');
+          tx.executeSql('ALTER TABLE LOGR ALTER COLUMN city TYPE varchar (255)');
+          tx.executeSql('ALTER TABLE LOGR ALTER COLUMN name TYPE varchar (255)');
+          msg = '<p>Log message created and row inserted.</p>';
+          document.querySelector('#status').innerHTML =  msg;
+        }
+      );//End db.transaction
 
-         db.transaction(function (tx) 
-       {
-        tx.executeSql('CREATE TABLE IF NOT EXISTS LOGR (name unique, city, state)');
-        tx.executeSql('ALTER TABLE LOGR ALTER COLUMN state TYPE varchar (255)');
-        tx.executeSql('ALTER TABLE LOGR ALTER COLUMN city TYPE varchar (255)');
-        tx.executeSql('ALTER TABLE LOGR ALTER COLUMN name TYPE varchar (255)');
-
-        // tx.executeSql('INSERT INTO LOGS (id, log) VALUES (1, "foobar")');
-        // tx.executeSql('INSERT INTO LOGS (id, log) VALUES (2, "logmsg")');
-        msg = '<p>Log message created and row inserted.</p>';
-        document.querySelector('#status').innerHTML =  msg;
-       }
-     );//End db.transaction
-
-  function AddValueToDB() 
-  {
-    var x = document.getElementById("e_name");
-    var name = x.value;
-    var y =  document.getElementById("e_city");
-    var city = y.value;
-    var b = document.getElementById("e_state");
-    var state = b.value;
-    local = city + " " + state ;
-     
-    db.transaction(function (tx) 
-      {  
-          tx.executeSql('INSERT INTO LOGR (name,city, state) VALUES (?, ?, ?)', [name, city, state]);
-          
-      }//End function (tx)
-    );//End db.transaction()
-    
-    db.transaction(function (tx) 
-      {
-        tx.executeSql('SELECT * FROM LOGR', [], function (tx, results) 
-        {
+      function AddValueToDB() {
+        var x = document.getElementById("e_name");
+        var name = x.value;
+        var y =  document.getElementById("e_city");
+        var city = y.value;
+        var b = document.getElementById("e_state");
+        var state = b.value;
+        local = city + " " + state ;
+        db.transaction(function (tx) {  
+              tx.executeSql('INSERT INTO LOGR (name,city, state) VALUES (?, ?, ?)', [name, city, state]);  
+          }//End function (tx)
+        );//End db.transaction()
+        
+        db.transaction(function (tx) {
+          tx.executeSql('SELECT * FROM LOGR', [], function (tx, results) {
           var len = results.rows.length, i;
           msg = "<p>Found rows: " + len + "</p>";
           document.querySelector('#status').innerHTML +=  msg;
+              for (i = 0; i < len; i++){
+                msg = "<p>" + results.rows.item(i).city + " " + results.rows.item(i).state +" " + results.rows.item(i).name +"</p>";
+                document.querySelector('#status').innerHTML +=  msg; 
+              }
+            }, null);//End tx.executeSql()
+           }//End function(tx) 
+        );//End db.transaction()
+      };//End AddValueToDB()
 
-          for (i = 0; i < len; i++)
-          {
-          msg = "<p>" + results.rows.item(i).city + " " + results.rows.item(i).state +" " + results.rows.item(i).name +"</p>";
-          document.querySelector('#status').innerHTML +=  msg;
-          
-          }
-        }, null);//End tx.executeSql()
-       }//End function(tx) 
-    );//End db.transaction()
-  };//End AddValueToDB()
+      function SearchDatabaseForValue(){
+        var x = document.getElementById("search_name");
+        var name = x.value;
+          db.transaction(function (tx) {
+            tx.executeSql('SELECT * FROM LOGR where name = "' + name + '"', [], function (tx, results) {
+              msg = "<p>" + results.rows.item(0).city + " " + results.rows.item(0).state + "</p>";
+              document.querySelector('#status').innerHTML +=  msg;
+            }, null);//End tx.executeSql()
+          }//End function(tx) 
+        );//End db.transaction()
+      }
 
-   function SearchDatabaseForValue(){
+      function DeleteValueFromDatabase() {
+        db.transaction(function(tx) {
+          tx.executeSql('delete from LOGR');
+          location.reload();
+        })
+      }//end deletevaluefromdatabase function
 
-    var x = document.getElementById("search_name");
-    var name = x.value;
+      function get_location() {
+        $(function() {
+          $("#map").googleMap();
+          $("#map").addMarker({
+            address: '"' + local + '"', // Postale Address
+          });
+        })
+      }// end get location
 
-    db.transaction(function (tx) 
-      {
-        tx.executeSql('SELECT * FROM LOGR where name = "' + name + '"', [], function (tx, results) 
-        {
-          msg = "<p>" + results.rows.item(0).city + " " + results.rows.item(0).state + "</p>";
-          document.querySelector('#status').innerHTML +=  msg;
-        }, null);//End tx.executeSql()
-       }//End function(tx) 
-    );//End db.transaction()
-   }
-
-  function DeleteValueFromDatabase() {
-   
-    db.transaction(function(tx) {
-      tx.executeSql('delete from LOGR');
-      location.reload();
-    })
-  }//end deletevaluefromdatabase function
-
-  function get_location() {
-    alert(local);
-  }
-
-</script>
-
-<script src="javascripts/jquery.js"></script>
-<script type="text/javascript" src="//www.google.fr/jsapi"></script>
-<script type="text/javascript">
-    google.load("maps", "3.4", {
-      other_params: "sensor=false&language=fr"
-    });
-</script>
-<script type="text/javascript" src="javascripts/jquery.googlemap.js"></script>
-
-    </head>
-    <body>
-
-<div data-role="page" id="page1" data-theme="b" data-ajax="false">
-
-   <div data-role="header">
-      <h1>First page</h1>
-   </div>
-   <div data-role="content">
-     <!-- <p>This is the main content of the page.</p> -->
-      <!-- < p>You can go to the <a href="#page2">second page</a>.</p> -->
-      <div id="status" name="status">Status Message</div>
-  <input id="e_name" type="text" placeholder="name">
-  <input id="e_city" type="text" placeholder="city">
- <input id="e_state" type="text" placeholder="state"> 
-  <input type="button" value="Add record" onClick="AddValueToDB()" >
-  <br>
-  <input id="search_name" type="text" placeholder="search by Name" >
-  <div><input type="button" value="Search" onClick="SearchDatabaseForValue()" ></div>
-
-  <input type="button" value="Delete" onClick="DeleteValueFromDatabase()"><br>
-  <input type="button" value="Get Location" onclick="get_location()">
-
- <a href="#page2" data-ajax="false">page 2</a>
-
-
-   </div><!-- end content -->
-   <div data-role="footer">
-      <h4>abtech.edu</h4>
-   </div>
-
-</div><!-- end page -->
-
-<div data-role="page" id="page2" data-title="This is the second page" data-theme="b">
-
-   <div data-role="header">
-      <h1>Second page</h1>
-   </div>
-   <div data-role="content">
-
-    <div id="map" style="width: 300px; height: 300px;"></div>
-<script type="text/javascript">
-  $(function() {
-    $("#map").googleMap({
-      zoom: 10, // Initial zoom level (optional)
-      coords: [48.895651, 2.290569], // Map center (optional)
-      type: "ROADMAP" // Map type (optional)
-    });
-  })
-</script>
-
-      
-   </div>
-   <div data-role="footer">
-      <h4>abtech.edu</h4>
-   </div>
-
-</div>
-    </body>
+    </script>
+    <script src="javascripts/jquery.js"></script>
+    <script type="text/javascript" src="//www.google.fr/jsapi"></script>
+    <script type="text/javascript">
+        google.load("maps", "3.4", {
+          other_params: "sensor=false&language=fr"
+        });
+    </script>
+    <script type="text/javascript" src="javascripts/jquery.googlemap.js"></script>
+  </head>
+  <body>
+    <div data-role="page" id="page1" data-theme="b" data-ajax="false">
+      <div data-role="header">
+        <h1>Welcome </h1>
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#page1">Home</a></li>
+            <li><a href="#page2">Map</a></li>
+          </ul>
+        </div>
+      </div>
+      <div data-role="content">
+        <div id="status" name="status">Status Message</div>
+        <input id="e_name" type="text" placeholder="name">
+        <input id="e_city" type="text" placeholder="city">
+        <input id="e_state" type="text" placeholder="state"> 
+        <input type="button" value="Add record" onClick="AddValueToDB()" >
+        <br>
+        <input id="search_name" type="text" placeholder="search by Name" >
+        <div><input type="button" value="Search" onClick="SearchDatabaseForValue()" ></div>
+        <input type="button" value="Delete" onClick="DeleteValueFromDatabase()"><br>
+        <input type="button" value="Get Location" onclick="get_location()"><br>
+        <div id="map" style="width: 300px; height: 300px;"></div>
+      </div><!-- end content -->
+      <div data-role="footer">
+        <h4>abtech.edu</h4>
+      </div>
+    </div><!-- end page -->
+  </body>
 </html>
